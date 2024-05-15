@@ -1,0 +1,38 @@
+version: "3.3"
+
+services:
+  libro:
+    build: ./libro
+    image: alejandromarcelo/libro
+    ports:
+      - "8001:8000"
+    environment:
+      DB_HOST: database-2.cbekimjprojv.us-east-1.rds.amazonaws.com
+      DB_PORT: 3306
+      DB_USER: admin2
+      DB_PASS: CC-utec_2024-s3
+      DB_NAME: bd_kapi_libro
+
+  prestamo:
+    build: ./prestamo
+    image: alejandromarcelo/prestamo
+    ports:
+      - "8002:8000"
+    environment:
+      DB_HOST: database-2.cbekimjprojv.us-east-1.rds.amazonaws.com
+      DB_PORT: 3306
+      DB_USER: admin2
+      DB_PASS: CC-utec_2024-s3
+      DB_NAME: bd_api_prestamo
+
+  usuario:
+    build: ./usuario
+    image: alejandromarcelo/usuario
+    ports:
+      - "8003:8000"
+    environment:
+      DB_HOST: database-2.cbekimjprojv.us-east-1.rds.amazonaws.com
+      DB_PORT: 3306
+      DB_USER: admin2
+      DB_PASS: CC-utec_2024-s3
+      DB_NAME: bd_api_usuario

@@ -1,0 +1,12 @@
+DROP DATABASE IF EXISTS bd_api_libro;
+CREATE DATABASE bd_api_libro CHARSET utf8mb4;
+USE bd_api_libro;
+
+CREATE TABLE libro (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    titulo VARCHAR(100) NOT NULL,
+    autor VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(200) NOT NULL,
+    imagen VARCHAR(200),
+    PRIMARY KEY (id)
+);

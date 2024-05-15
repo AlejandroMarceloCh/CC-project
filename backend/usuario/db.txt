@@ -1,0 +1,14 @@
+DROP DATABASE IF EXISTS bd_api_usuario;
+CREATE DATABASE bd_api_usuario CHARSET utf8mb4;
+USE bd_api_usuario;
+
+CREATE TABLE usuario (
+    username VARCHAR(50) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    sexo ENUM('Masculino', 'Femenino', 'Otro') NOT NULL,
+    correo VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    direccion VARCHAR(200) NOT NULL,
+    PRIMARY KEY (username),
+    UNIQUE KEY (correo)
+);
