@@ -4,17 +4,24 @@ import schemas
 
 app = FastAPI()
 
-# Configuración para conectarse a la base de datos RDS
-host_name = "database-2.cbekimjprojv.us-east-1.rds.amazonaws.com"
-port_number = 3306
-user_name = "admin2"
-password_db = "CC-utec_2024-s3"
-database_name = "bd_api_prestamo"
+# Configuración para conectarse a las bases de datos RDS
+db_config = {
+    "host": "database-2.cbekimjprojv.us-east-1.rds.amazonaws.com",
+    "port": 3306,
+    "user": "admin2",
+    "password": "CC-utec_2024-s3"
+}
 
 # Obtener todos los préstamos
 @app.get("/prestamos")
 def get_prestamos():
-    mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)  
+    mydb = mysql.connector.connect(
+        host=db_config["host"],
+        port=db_config["port"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database="bd_api_prestamo"
+    )
     cursor = mydb.cursor(dictionary=True)
     cursor.execute("SELECT * FROM prestamos")
     result = cursor.fetchall()
@@ -24,9 +31,15 @@ def get_prestamos():
 # Obtener un préstamo por su ID
 @app.get("/prestamo/{id}")
 def get_prestamo(id: int):
-    mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)  
+    mydb = mysql.connector.connect(
+        host=db_config["host"],
+        port=db_config["port"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database="bd_api_prestamo"
+    )
     cursor = mydb.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM prestamos WHERE id = %s", (id,))
+    cursor.execute("SELECT * FROM prestamos WHERE id = %d", (id,))
     result = cursor.fetchone()
     mydb.close()
     if result:
@@ -37,31 +50,54 @@ def get_prestamo(id: int):
 # Agregar un nuevo préstamo
 @app.post("/prestamos")
 def add_prestamo(item: schemas.Item):
-    mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)
+    # Conectar a la base de datos de usuarios para verificar si el usuario existe
+    user_db = mysql.connector.connect(
+        host=db_config["host"],
+        port=db_config["port"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database="bd_api_usuario"
+    )
     
-    # Verificar si el usuario existe en la base de datos RDS
     usuario_username = item.usuario_username
-    user_cursor = mydb.cursor(dictionary=True)
+    user_cursor = user_db.cursor(dictionary=True)
     user_cursor.execute("SELECT * FROM usuarios WHERE username = %s", (usuario_username,))
     user_result = user_cursor.fetchone()
+    user_db.close()
+    
     if not user_result:
-        mydb.close()
         raise HTTPException(status_code=404, detail="El usuario no existe")
+
+    # Conectar a la base de datos de préstamos para agregar el nuevo préstamo
+    prestamo_db = mysql.connector.connect(
+        host=db_config["host"],
+        port=db_config["port"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database="bd_api_prestamo"
+    )
 
     libro_id = item.libro_id
     estado = item.estado
-    cursor = mydb.cursor()
+    cursor = prestamo_db.cursor()
     sql = "INSERT INTO prestamos (usuario_username, libro_id, estado) VALUES (%s, %s, %s)"
     val = (usuario_username, libro_id, estado)
     cursor.execute(sql, val)
-    mydb.commit()
-    mydb.close()
+    prestamo_db.commit()
+    prestamo_db.close()
+    
     return {"message": "Préstamo agregado exitosamente"}
 
 # Modificar un préstamo
 @app.put("/prestamos/{id}")
 def update_prestamo(id: int, item: schemas.Item):
-    mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)  
+    mydb = mysql.connector.connect(
+        host=db_config["host"],
+        port=db_config["port"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database="bd_api_prestamo"
+    )
     usuario_username = item.usuario_username
     libro_id = item.libro_id
     estado = item.estado
@@ -77,10 +113,17 @@ def update_prestamo(id: int, item: schemas.Item):
 # Eliminar un préstamo por su ID
 @app.delete("/prestamos/{id}")
 def delete_prestamo(id: int):
-    mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)  
+    mydb = mysql.connector.connect(
+        host=db_config["host"],
+        port=db_config["port"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database="bd_api_prestamo"
+    )
     cursor = mydb.cursor()
     cursor.execute("DELETE FROM prestamos WHERE id = %s", (id,))
     mydb.commit()
     mydb.close()
     return {"message": "Préstamo eliminado exitosamente"}
+
 
