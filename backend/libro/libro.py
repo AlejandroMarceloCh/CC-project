@@ -53,7 +53,7 @@ def add_libro(item: schemas.Libro):
     imagen=item.imagen
     # Agregar más campos según la estructura de tu tabla de libros en la base de datos
     cursor = mydb.cursor()
-    sql = "INSERT INTO libros (titulo, autor, descripcion, imagen) VALUES (%s, %s, %s)"
+    sql = "INSERT INTO libros (titulo, autor, descripcion, imagen) VALUES (%s, %s, %s, %s)"
     val = (titulo, autor, descripcion, imagen)
     cursor.execute(sql, val)
     mydb.commit()
