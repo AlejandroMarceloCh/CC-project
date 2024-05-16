@@ -8,7 +8,7 @@ host_name = "database-2.cbekimjprojv.us-east-1.rds.amazonaws.com"
 port_number = "3306"
 user_name = "admin2"
 password_db = "CC-utec_2024-s3"
-database_name = "bd_kapi_libro"  
+database_name = "bd_api_libro"  
 
 # Obtener todos los libros
 @app.get("/libros")
