@@ -4,10 +4,10 @@ import schemas
 
 app = FastAPI()
 
-host_name = "44.223.170.179"
-port_number = "8005"
-user_name = "root"
-password_db = "utec"
+host_name = "database-2.cbekimjprojv.us-east-1.rds.amazonaws.com"
+port_number = "3306"
+user_name = "admin2"
+password_db = "CC-utec_2024-s3"
 database_name = "bd_kapi_libro"  
 
 # Obtener todos los libros
