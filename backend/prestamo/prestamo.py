@@ -4,11 +4,12 @@ import schemas
 
 app = FastAPI()
 
+# Configuración para conectarse a la base de datos RDS
 host_name = "database-2.cbekimjprojv.us-east-1.rds.amazonaws.com"
-port_number = "3306"
+port_number = 3306
 user_name = "admin2"
 password_db = "CC-utec_2024-s3"
-database_name = "bd_api_prestamo"  
+database_name = "bd_api_prestamo"
 
 # Obtener todos los préstamos
 @app.get("/prestamos")
@@ -25,7 +26,7 @@ def get_prestamos():
 def get_prestamo(id: int):
     mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)  
     cursor = mydb.cursor(dictionary=True)
-    cursor.execute(f"SELECT * FROM prestamos WHERE id = {id}")
+    cursor.execute("SELECT * FROM prestamos WHERE id = %s", (id,))
     result = cursor.fetchone()
     mydb.close()
     if result:
@@ -38,10 +39,13 @@ def get_prestamo(id: int):
 def add_prestamo(item: schemas.Item):
     mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)
     
-    # Verificar si el usuario existe
+    # Verificar si el usuario existe en la base de datos RDS
     usuario_username = item.usuario_username
-    user_response = requests.get(f"http://{host_name}:{port_number}/usuarios/{usuario_username}")
-    if user_response.status_code != 200:
+    user_cursor = mydb.cursor(dictionary=True)
+    user_cursor.execute("SELECT * FROM usuarios WHERE username = %s", (usuario_username,))
+    user_result = user_cursor.fetchone()
+    if not user_result:
+        mydb.close()
         raise HTTPException(status_code=404, detail="El usuario no existe")
 
     libro_id = item.libro_id
@@ -75,7 +79,8 @@ def update_prestamo(id: int, item: schemas.Item):
 def delete_prestamo(id: int):
     mydb = mysql.connector.connect(host=host_name, port=port_number, user=user_name, password=password_db, database=database_name)  
     cursor = mydb.cursor()
-    cursor.execute(f"DELETE FROM prestamos WHERE id = {id}")
+    cursor.execute("DELETE FROM prestamos WHERE id = %s", (id,))
     mydb.commit()
     mydb.close()
     return {"message": "Préstamo eliminado exitosamente"}
+
