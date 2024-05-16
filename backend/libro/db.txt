@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS bd_api_libro;
 CREATE DATABASE bd_api_libro CHARSET utf8mb4;
 USE bd_api_libro;
 
-CREATE TABLE libro (
+CREATE TABLE libros (
     id INT(11) NOT NULL AUTO_INCREMENT,
     titulo VARCHAR(100) NOT NULL,
     autor VARCHAR(100) NOT NULL,
