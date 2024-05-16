@@ -4,4 +4,4 @@ class Libro(BaseModel):
     autor: str
     descripcion: str
     imagen: str  
-    categoria: str
+    
