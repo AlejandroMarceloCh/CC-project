@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS bd_api_prestamo;
 CREATE DATABASE bd_api_prestamo CHARSET utf8mb4;
 USE bd_api_prestamo;
 
-CREATE TABLE prestamo (
+CREATE TABLE prestamos (
     id INT(11) NOT NULL AUTO_INCREMENT,
     usuario_username VARCHAR(50) NOT NULL,
     libro_id INT(11) NOT NULL,
